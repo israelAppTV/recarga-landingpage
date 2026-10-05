@@ -9,11 +9,14 @@ import {
   Star,
   Tv,
 } from "lucide-react";
-
-const WHATSAPP_NUMBER = "5511911950388";
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20quero%20adquirir%20meu%20c%C3%B3digo%20de%20acesso.`;
-const MONTHLY_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá,%20quero%20o%20plano%20Mensal%20de%2019%20reais`;
-const ANNUAL_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá,%20quero%20o%20plano%20Anual%20de%20180%20reais`;
+import {
+  otherProducts,
+  productById,
+  type Product,
+  unitvProducts,
+  WHATSAPP_URL,
+  whatsappUrl,
+} from "@/lib/catalog";
 
 const menu = [
   { label: "Início", href: "#inicio" },
@@ -148,6 +151,85 @@ function Stars() {
   );
 }
 
+function PlanCard({ product }: { product: Product }) {
+  const [whole, cents = "00"] = product.price.split(",");
+  const benefits =
+    product.brand === "UniTV"
+      ? sharedBenefits
+      : (["Entrega na hora pelo WhatsApp", "Pagamento via PIX"] as const);
+  const highlighted = product.accent === "green";
+
+  return (
+    <article
+      className={`relative flex flex-col rounded-3xl border bg-[#111] p-8 ${
+        product.badge ? "pt-16" : ""
+      } ${
+        highlighted
+          ? "border-green-500/50 shadow-[0_0_40px_rgba(34,197,94,0.16)]"
+          : "border-white/10 transition duration-300 hover:border-red-500/70 hover:shadow-[0_0_48px_rgba(220,38,38,0.28)]"
+      }`}
+    >
+      {product.badge ? (
+        <span
+          className={`absolute left-1/2 top-5 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-full px-3 py-1 text-center text-[11px] font-bold tracking-wide sm:text-xs ${
+            highlighted ? "bg-green-500 text-black" : "bg-red-600 text-white"
+          }`}
+        >
+          {product.badge}
+        </span>
+      ) : null}
+      <img
+        src={product.image}
+        alt={`Arte de divulgação: ${product.trigger}`}
+        className="h-36 w-full rounded-2xl object-cover"
+      />
+      <p className="mt-6 text-center text-sm font-medium text-gray-400">
+        {product.name}
+      </p>
+      <h3 className="mt-1 text-center text-lg font-semibold text-gray-200">
+        {product.plan}
+        {product.days ? ` · ${product.days} dias` : ""}
+      </h3>
+      {product.compareAt ? (
+        <p className="mt-4 text-center text-sm text-gray-500 line-through">
+          R$ {product.compareAt}
+        </p>
+      ) : null}
+      <div className={product.compareAt ? "" : "mt-4"}>
+        <Price whole={whole} cents={cents} />
+      </div>
+      <ul className="mt-8 flex flex-col gap-4">
+        {benefits.map((benefit) => (
+          <li key={benefit} className="flex items-center gap-3 text-gray-200">
+            <Check className="size-5 shrink-0 text-green-500" aria-hidden="true" />
+            {benefit}
+          </li>
+        ))}
+        {product.id === "unitv-anual" ? (
+          <li className="flex items-center gap-3 text-gray-200">
+            <Gift className="size-5 shrink-0 text-amber-400" aria-hidden="true" />
+            Prioridade no suporte VIP
+          </li>
+        ) : null}
+      </ul>
+      <div className="mt-auto pt-8">
+        <a
+          href={whatsappUrl(product.trigger)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex w-full items-center justify-center rounded-full px-6 py-4 text-center text-base font-bold leading-snug whitespace-normal transition-colors ${
+            highlighted
+              ? "bg-green-500 text-black hover:bg-green-400"
+              : "bg-red-600 text-white hover:bg-red-500"
+          }`}
+        >
+          Comprar {product.name} {product.plan}
+        </a>
+      </div>
+    </article>
+  );
+}
+
 function Price({
   whole,
   cents = "00",
@@ -217,9 +299,9 @@ export default function Home() {
           </h1>
 
           <p className="max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg">
-            O seu sistema oficial com entrega automática pelo WhatsApp. Escolha
-            entre o plano mensal por R$19,00 ou anual por R$180,00 e assista
-            onde quiser.
+            Recarga UniTV Oficial com entrega automática pelo WhatsApp. Mensal
+            por R${productById("unitv-mensal").price} ou anual promocional por
+            R${productById("unitv-anual").price}.
           </p>
 
           <ul className="flex flex-wrap items-center justify-center gap-3">
@@ -265,7 +347,7 @@ export default function Home() {
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
             <div className="mx-auto flex max-w-2xl flex-col gap-4 text-center">
               <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Escolha o seu plano de recarga PlaySync
+                Recarga UniTV Oficial
               </h2>
               <p className="text-base leading-relaxed text-gray-300 sm:text-lg">
                 Pagamento seguro via PIX. Código de ativação entregue na hora
@@ -273,86 +355,26 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <article className="relative flex flex-col rounded-3xl border border-white/10 bg-[#111] p-8 pt-16 transition duration-300 hover:border-red-500/70 hover:shadow-[0_0_48px_rgba(220,38,38,0.28)]">
-                <span className="absolute right-6 top-6 rounded-full bg-red-600 px-3 py-1 text-xs font-bold tracking-wide text-white">
-                  MAIS POPULAR
-                </span>
-                <h3 className="text-center text-lg font-semibold text-gray-200">
-                  Mensal
-                </h3>
-                <div className="mt-4">
-                  <Price whole="19" />
-                </div>
-                <ul className="mt-8 flex flex-col gap-4">
-                  {sharedBenefits.map((benefit) => (
-                    <li
-                      key={benefit}
-                      className="flex items-center gap-3 text-gray-200"
-                    >
-                      <Check
-                        className="size-5 shrink-0 text-green-500"
-                        aria-hidden="true"
-                      />
-                      {benefit}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-auto pt-8">
-                  <a
-                    href={MONTHLY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-red-600 px-6 py-4 text-center text-base font-bold text-white transition-colors hover:bg-red-500"
-                  >
-                    Comprar Recarga Mensal
-                  </a>
-                </div>
-              </article>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+              {unitvProducts.map((product) => (
+                <PlanCard key={product.id} product={product} />
+              ))}
+            </div>
 
-              <article className="relative flex flex-col rounded-3xl border border-green-500/50 bg-[#111] p-8 pt-16 shadow-[0_0_40px_rgba(34,197,94,0.16)]">
-                <span className="absolute left-1/2 top-5 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-full bg-green-500 px-3 py-1 text-center text-[11px] font-bold leading-snug tracking-wide text-black sm:text-xs">
-                  🔥 MELHOR ESCOLHA — POUPE MUITO
-                </span>
-                <h3 className="text-center text-lg font-semibold text-gray-200">
-                  Anual
-                </h3>
-                <p className="mt-4 text-center text-sm text-gray-500 line-through">
-                  R$ 228,00
-                </p>
-                <Price whole="180" />
-                <ul className="mt-8 flex flex-col gap-4">
-                  {sharedBenefits.map((benefit) => (
-                    <li
-                      key={benefit}
-                      className="flex items-center gap-3 text-gray-200"
-                    >
-                      <Check
-                        className="size-5 shrink-0 text-green-500"
-                        aria-hidden="true"
-                      />
-                      {benefit}
-                    </li>
-                  ))}
-                  <li className="flex items-center gap-3 text-gray-200">
-                    <Gift
-                      className="size-5 shrink-0 text-amber-400"
-                      aria-hidden="true"
-                    />
-                    Prioridade no suporte VIP
-                  </li>
-                </ul>
-                <div className="mt-auto pt-8">
-                  <a
-                    href={ANNUAL_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-green-500 px-6 py-4 text-center text-base font-bold text-black transition-colors hover:bg-green-400"
-                  >
-                    Comprar Recarga Anual
-                  </a>
-                </div>
-              </article>
+            <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-4 text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                Outras recargas
+              </h2>
+              <p className="text-base leading-relaxed text-gray-300 sm:text-lg">
+                WPLAY, Flixx Cine, Lupi TV e o combo, com entrega na hora pelo
+                WhatsApp.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+              {otherProducts.map((product) => (
+                <PlanCard key={product.id} product={product} />
+              ))}
             </div>
           </div>
         </section>
@@ -492,20 +514,20 @@ export default function Home() {
             </h2>
             <div className="flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
               <a
-                href={MONTHLY_URL}
+                href={whatsappUrl(productById("unitv-mensal").trigger)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex flex-1 items-center justify-center rounded-full bg-red-600 px-6 py-4 text-center text-sm font-bold text-white transition-colors hover:bg-red-500 sm:text-base"
               >
-                Recarga Mensal — R$19,00
+                UniTV Mensal — R${productById("unitv-mensal").price}
               </a>
               <a
-                href={ANNUAL_URL}
+                href={whatsappUrl(productById("unitv-anual").trigger)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex flex-1 items-center justify-center rounded-full bg-green-500 px-6 py-4 text-center text-sm font-bold text-black transition-colors hover:bg-green-400 sm:text-base"
               >
-                Recarga Anual — R$180,00
+                UniTV Anual — R${productById("unitv-anual").price}
               </a>
             </div>
           </div>
