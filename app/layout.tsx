@@ -1,30 +1,42 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { FloatingWhatsAppButton } from "@/components/FloatingWhatsAppButton";
+import { Container } from "@/components/layout/Container";
 
 export const metadata: Metadata = {
-  title: "PlaySync Pro",
-  description:
-    "Receba seu código de ativação na hora. Sistema de mídia unificado, sem travamentos e compatível com sua Smart TV, TV Box ou celular.",
+  title: "Renova UnitTV",
+  description: "Loja de códigos digitais",
+  icons: {
+    icon: "/logo.ico",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="pt-BR">
+      <body className="flex min-h-screen flex-col antialiased">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18116512472"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18116512472');
+          `}
+        </Script>
+        <Navbar />
+        <main className="flex-1">
+          <Container>{children}</Container>
+        </main>
+        <Footer />
+        <FloatingWhatsAppButton />
+      </body>
     </html>
   );
 }

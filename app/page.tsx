@@ -1,574 +1,307 @@
+import { CtaCardSection } from "@/components/CtaCardSection";
+import { FaqSection } from "@/components/FaqSection";
+import { resolveWhatsappHref } from "@/components/FloatingWhatsAppButton";
+import { Hero } from "@/components/Hero";
+import { HowToSection } from "@/components/HowToSection";
+import { InstallTutorialsSection } from "@/components/InstallTutorialsSection";
+import type { PlanCardData } from "@/components/PlanCard";
+import { PlansSection } from "@/components/PlansSection";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { TipsSectionWithModal } from "@/components/TipsSectionWithModal";
 import {
-  Cast,
-  Check,
-  Gift,
-  Laptop,
-  Plus,
-  ShoppingCart,
-  Smartphone,
-  Star,
-  Tv,
-} from "lucide-react";
-import {
-  otherProducts,
   productById,
+  products,
   type Product,
-  unitvProducts,
-  WHATSAPP_URL,
   whatsappUrl,
 } from "@/lib/catalog";
 
-const menu = [
-  { label: "Início", href: "#inicio" },
-  { label: "Planos", href: "#planos" },
-  { label: "Como Funciona", href: "#como-funciona" },
-  { label: "FAQ", href: "#faq" },
+const mensal = productById("unitv-mensal");
+const anual = productById("unitv-anual");
+
+const unitvFeatures = [
+  "Assista em 2 telas com a mesma conta",
+  "Canais ao vivo SD, HD e FHD",
+  "Filmes e séries sempre atualizados",
+  "Compatível com TV Box, celular e Smart TV",
+  "Código enviado na hora pelo WhatsApp",
+  "Suporte técnico + tutoriais de instalação",
 ] as const;
 
-const sharedBenefits = [
-  "2 ecrãs em simultâneo",
-  "Qualidade FHD",
-  "Atualizações diárias",
-  "Ativação imediata",
-] as const;
-
-const badges = [
-  "PIX instantâneo",
-  "Código no WhatsApp",
-  "Compatibilidade Total",
-] as const;
-
-const testimonials = [
-  {
-    name: "Lucas P.",
-    initial: "L",
-    color: "bg-red-600",
-    text: "Pedi pelo WhatsApp e o código chegou em menos de um minuto. Atendimento rápido e sem complicação.",
-  },
-  {
-    name: "Fernanda R.",
-    initial: "F",
-    color: "bg-purple-600",
-    text: "Respondem na hora no WhatsApp e a ativação foi imediata. Recomendo a quem quer o código sem espera.",
-  },
-  {
-    name: "Rafael M.",
-    initial: "R",
-    color: "bg-amber-500",
-    text: "O suporte pelo WhatsApp foi direto e o código chegou na conversa quase de imediato. Muito rápido.",
-  },
-] as const;
-
-const highlights = [
-  { value: "2 Ecrãs", label: "Telas em simultâneo" },
-  { value: "FHD", label: "Qualidade" },
-  { value: "24h", label: "Entrega automática" },
-  { value: "5+", label: "Plataformas suportadas" },
-] as const;
-
-const steps = [
-  { title: "Escolha o plano" },
-  {
-    title: "Fale no WhatsApp",
-    text: "Clique no botão e fale connosco.",
-  },
-  { title: "Pague via PIX", text: "Processamento em segundos." },
-  {
-    title: "Receba e ative",
-    text: "Código chega na hora na conversa.",
-  },
-] as const;
-
-const devices = [
-  {
-    icon: Smartphone,
-    title: "Telemóvel Android",
-    text: "Instale a aplicação, cole o código enviado no WhatsApp e comece a ver em poucos minutos.",
-  },
-  {
-    icon: Cast,
-    title: "Dispositivo de Mídia",
-    text: "No TV Box ou stick, abra a app, introduza o código e a ativação fica pronta na hora.",
-  },
-  {
-    icon: Tv,
-    title: "Smart TV",
-    text: "Procure a aplicação na loja da sua TV, instale e ative com o código recebido na conversa.",
-  },
-  {
-    icon: Laptop,
-    title: "PC / iPhone",
-    text: "Aceda pelo navegador ou pela aplicação e conclua a instalação com o mesmo código.",
-  },
-] as const;
-
-const faqs = [
-  {
-    question: "A recarga é segura?",
-    answer:
-      "Sim. O pagamento é feito via PIX e o código de ativação é enviado diretamente na conversa do WhatsApp.",
-  },
-  {
-    question: "Posso usar em 2 ecrãs ao mesmo tempo?",
-    answer:
-      "Sim. Os planos incluem 2 ecrãs em simultâneo, para assistir em mais do que um aparelho.",
-  },
-  {
-    question: "Como recebo o código de recarga?",
-    answer:
-      "Depois de escolher o plano e confirmar o PIX no WhatsApp, o código chega na mesma conversa.",
-  },
-  {
-    question: "Quanto tempo demora a ativação?",
-    answer:
-      "A entrega é automática. Na maior parte dos casos o código chega em menos de um minuto.",
-  },
-] as const;
-
-function WhatsAppIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="currentColor"
-    >
-      <path d="M20.52 3.48A11.78 11.78 0 0 0 12.06 0C5.5 0 .16 5.33.16 11.89c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.86 11.86 0 0 0 5.76 1.47h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.16-3.45-8.44ZM12.07 21.15h-.01a9.86 9.86 0 0 1-5.02-1.37l-.36-.21-3.74.98 1-3.64-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.87-9.9 9.87Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z" />
-    </svg>
-  );
+function priceToCents(price: string) {
+  const [whole, fraction = "00"] = price.split(",");
+  return Number(whole) * 100 + Number(fraction.padEnd(2, "0").slice(0, 2));
 }
 
-function Stars() {
-  return (
-    <span className="flex items-center gap-0.5" aria-hidden="true">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Star
-          key={index}
-          className="size-4 fill-yellow-400 text-yellow-400"
-        />
-      ))}
-    </span>
-  );
+function toPlan(product: Product): PlanCardData {
+  const annual = product.id === "unitv-anual";
+  const unitv = product.brand === "UniTV";
+
+  return {
+    id: product.id,
+    title: product.name,
+    periodLabel: product.days
+      ? `Assinatura por ${product.days} dias`
+      : product.plan,
+    priceCents: priceToCents(product.price),
+    compareAtCents: product.compareAt
+      ? priceToCents(product.compareAt)
+      : undefined,
+    shortDescription: unitv
+      ? `Pedir a recarga ${product.plan.toLowerCase()} pelo WhatsApp`
+      : `${product.name} — ${product.plan}`,
+    features: annual
+      ? [
+          "12 meses de acesso completo",
+          `De R$ ${product.compareAt} por R$ ${product.price}`,
+          "Canais ao vivo SD, HD e FHD",
+          "Filmes e séries + acesso em 2 telas",
+          "Funciona em TV Box, Smart TV e celular Android",
+          "Código enviado na hora pelo WhatsApp",
+        ]
+      : unitv
+        ? [...unitvFeatures]
+        : [
+            "Pedido pelo WhatsApp",
+            "Pagamento via PIX na conversa",
+            "Código enviado na hora",
+          ],
+    ctaLabel:
+      product.brand === "UniTV"
+        ? `Comprar Recarga ${product.plan}`
+        : `Comprar ${product.name} ${product.plan}`,
+    ctaHref: whatsappUrl(product.trigger),
+    detailsLabel: "Ver detalhes",
+    detailsHref: "/#planos",
+  };
 }
 
-function PlanCard({ product }: { product: Product }) {
-  const [whole, cents = "00"] = product.price.split(",");
-  const benefits =
-    product.brand === "UniTV"
-      ? sharedBenefits
-      : (["Entrega na hora pelo WhatsApp", "Pagamento via PIX"] as const);
-  const highlighted = product.accent === "green";
+export default function HomePage() {
+  const plans = products.map(toPlan);
+  const heroWhatsappUrl = resolveWhatsappHref();
 
   return (
-    <article
-      className={`relative flex flex-col rounded-3xl border bg-[#111] p-8 ${
-        product.badge ? "pt-16" : ""
-      } ${
-        highlighted
-          ? "border-green-500/50 shadow-[0_0_40px_rgba(34,197,94,0.16)]"
-          : "border-white/10 transition duration-300 hover:border-red-500/70 hover:shadow-[0_0_48px_rgba(220,38,38,0.28)]"
-      }`}
-    >
-      {product.badge ? (
-        <span
-          className={`absolute left-1/2 top-5 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-full px-3 py-1 text-center text-[11px] font-bold tracking-wide sm:text-xs ${
-            highlighted ? "bg-green-500 text-black" : "bg-red-600 text-white"
-          }`}
-        >
-          {product.badge}
-        </span>
-      ) : null}
-      <img
-        src={product.image}
-        alt={`Arte de divulgação: ${product.trigger}`}
-        className="h-36 w-full rounded-2xl object-cover"
+    <div className="space-y-12 py-8">
+      <Hero
+        title="Comprar Recarga Oficial com Entrega Imediata"
+        titleHighlight="Oficial"
+        subtitle="Peça sua recarga pelo WhatsApp e receba o código na hora na conversa. Aqui você encontra os melhores planos e preços com segurança, suporte e tutoriais de instalação para TV Box, celular e Smart TV."
+        badges={[
+          { text: "Site Oficial • Entrega segura", dot: "orange" },
+          { text: "Recarga com entrega imediata pelo WhatsApp", dot: "green" },
+        ]}
+        featureCards={[
+          {
+            title: "Pedido",
+            mainText: "Pelo WhatsApp",
+            description: "Escolha o plano e fale conosco",
+          },
+          {
+            title: "Código",
+            mainText: "Entrega Imediata",
+            description: "Receba na conversa na hora",
+          },
+          {
+            title: "Assinatura",
+            mainText: "Até 2 telas",
+            description: "Acesso simultâneo garantido",
+          },
+        ]}
+        ctaLabel="Comprar Recarga"
+        ctaHref={whatsappUrl(mensal.trigger)}
+        secondaryCtaLabel="Download e Instalação"
+        secondaryCtaHref="/#planos"
+        whatsappCtaLabel="Tire suas dúvidas pelo WhatsApp"
+        whatsappCtaHref={heroWhatsappUrl}
+        imageSrc="/images/hero-app.webp"
+        imageAlt="Prévia do app e compatibilidade em dispositivos"
+        imageCardTitle="Prévia do app"
       />
-      <p className="mt-6 text-center text-sm font-medium text-gray-400">
-        {product.name}
-      </p>
-      <h3 className="mt-1 text-center text-lg font-semibold text-gray-200">
-        {product.plan}
-        {product.days ? ` · ${product.days} dias` : ""}
-      </h3>
-      {product.compareAt ? (
-        <p className="mt-4 text-center text-sm text-gray-500 line-through">
-          R$ {product.compareAt}
-        </p>
-      ) : null}
-      <div className={product.compareAt ? "" : "mt-4"}>
-        <Price whole={whole} cents={cents} />
-      </div>
-      <ul className="mt-8 flex flex-col gap-4">
-        {benefits.map((benefit) => (
-          <li key={benefit} className="flex items-center gap-3 text-gray-200">
-            <Check className="size-5 shrink-0 text-green-500" aria-hidden="true" />
-            {benefit}
-          </li>
-        ))}
-        {product.id === "unitv-anual" ? (
-          <li className="flex items-center gap-3 text-gray-200">
-            <Gift className="size-5 shrink-0 text-amber-400" aria-hidden="true" />
-            Prioridade no suporte VIP
-          </li>
-        ) : null}
-      </ul>
-      <div className="mt-auto pt-8">
-        <a
-          href={whatsappUrl(product.trigger)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`inline-flex w-full items-center justify-center rounded-full px-6 py-4 text-center text-base font-bold leading-snug whitespace-normal transition-colors ${
-            highlighted
-              ? "bg-green-500 text-black hover:bg-green-400"
-              : "bg-red-600 text-white hover:bg-red-500"
-          }`}
-        >
-          Comprar {product.name} {product.plan}
-        </a>
-      </div>
-    </article>
-  );
-}
-
-function Price({
-  whole,
-  cents = "00",
-}: {
-  whole: string;
-  cents?: string;
-}) {
-  return (
-    <p className="flex items-start justify-center font-bold text-white">
-      <span className="mt-3 text-lg font-semibold text-gray-300">R$</span>
-      <span className="text-6xl tracking-tight">{whole}</span>
-      <span className="mt-2 text-2xl">,{cents}</span>
-    </p>
-  );
-}
-
-export default function Home() {
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-[70vh] w-[min(100%,56rem)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.28)_0%,rgba(220,38,38,0.08)_38%,transparent_70%)]"
+      <PlansSection
+        title="Planos e Preços — Recarga Oficial"
+        titleHighlight="Recarga Oficial"
+        subtitle="Compare os planos e escolha a melhor opção. Recarga UniTV e outras marcas, com o código entregue na hora pelo WhatsApp."
+        plans={plans}
       />
-
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-md">
-        <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <span className="text-lg font-bold tracking-tight">PlaySync</span>
-
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
-            {menu.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm text-gray-300 transition-colors hover:text-white"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-400"
-          >
-            Comprar Agora
-          </a>
-        </div>
-      </header>
-
-      <main className="relative z-10">
-        <section
-          id="inicio"
-          className="flex min-h-screen flex-col items-center justify-center px-4 py-20 sm:px-6"
-        >
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 pt-16 text-center">
-          <p className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs text-gray-300 sm:text-sm">
-            Ativação 24h - Entrega instantânea via WhatsApp
-          </p>
-
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-            <span className="block text-white">Recarga Oficial</span>
-            <span className="mt-2 block bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">
-              Código na Hora via PIX.
-            </span>
-          </h1>
-
-          <p className="max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg">
-            Recarga UniTV Oficial com entrega automática pelo WhatsApp. Mensal
-            por R${productById("unitv-mensal").price} ou anual promocional por
-            R${productById("unitv-anual").price}.
-          </p>
-
-          <ul className="flex flex-wrap items-center justify-center gap-3">
-            {badges.map((badge) => (
-              <li
-                key={badge}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-200"
-              >
-                <Check className="size-4 text-green-500" aria-hidden="true" />
-                {badge}
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex w-full flex-col items-center gap-4">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full max-w-md items-center justify-center gap-3 rounded-full bg-yellow-500 px-8 py-4 text-base font-bold text-black transition-colors hover:bg-yellow-400 sm:text-lg"
-            >
-              <ShoppingCart className="size-5" aria-hidden="true" />
-              Comprar Recarga
-            </a>
-
-            <p className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-300">
-              <span className="sr-only">Avaliação 4.9 de 5.</span>
-              <span className="flex items-center gap-0.5" aria-hidden="true">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star
-                    key={index}
-                    className="size-4 fill-yellow-400 text-yellow-400"
-                  />
-                ))}
-              </span>
-              <span>4.9 - +8.200 clientes satisfeitos</span>
-            </p>
-          </div>
-        </div>
-        </section>
-
-        <section id="planos" className="scroll-mt-24 px-4 py-20 sm:px-6">
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-            <div className="mx-auto flex max-w-2xl flex-col gap-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Recarga UniTV Oficial
-              </h2>
-              <p className="text-base leading-relaxed text-gray-300 sm:text-lg">
-                Pagamento seguro via PIX. Código de ativação entregue na hora
-                pelo WhatsApp.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-              {unitvProducts.map((product) => (
-                <PlanCard key={product.id} product={product} />
-              ))}
-            </div>
-
-            <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Outras recargas
-              </h2>
-              <p className="text-base leading-relaxed text-gray-300 sm:text-lg">
-                WPLAY, Flixx Cine, Lupi TV e o combo, com entrega na hora pelo
-                WhatsApp.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-              {otherProducts.map((product) => (
-                <PlanCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-4 py-20 sm:px-6">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-            <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
-              <p className="flex items-center gap-2 text-sm text-gray-300">
-                <span className="sr-only">Avaliação 4.9 de 5.</span>
-                <Stars />
-                <span>4.9/5</span>
-              </p>
-              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Quem fez a recarga recomenda
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              {testimonials.map((item) => (
-                <article
-                  key={item.name}
-                  className="flex flex-col gap-5 rounded-2xl bg-[#111] p-6"
-                >
-                  <Stars />
-                  <p className="leading-relaxed text-gray-300">{item.text}</p>
-                  <div className="mt-auto flex items-center gap-3">
-                    <span
-                      className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${item.color}`}
-                      aria-hidden="true"
-                    >
-                      {item.initial}
-                    </span>
-                    <span className="font-medium text-white">{item.name}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="como-funciona"
-          className="scroll-mt-24 px-4 py-20 sm:px-6"
-        >
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-            <h2 className="text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Como funciona a recarga?
-            </h2>
-
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              {highlights.map((item) => (
-                <article
-                  key={item.value}
-                  className="rounded-2xl bg-[#1a1a1a] px-4 py-8 text-center"
-                >
-                  <p className="text-2xl font-bold text-white sm:text-3xl">
-                    {item.value}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-400">{item.label}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {steps.map((step, index) => (
-                <article
-                  key={step.title}
-                  className="rounded-2xl bg-[#111] p-5"
-                >
-                  <span className="flex size-8 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
-                    {index + 1}
-                  </span>
-                  <h3 className="mt-4 font-semibold text-white">{step.title}</h3>
-                  {"text" in step ? (
-                    <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                      {step.text}
-                    </p>
-                  ) : null}
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-4 py-20 sm:px-6">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-            <h2 className="text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Em quais aparelhos funciona?
-            </h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {devices.map(({ icon: Icon, title, text }) => (
-                <article key={title} className="rounded-2xl bg-[#111] p-6">
-                  <Icon className="size-8 text-red-500" aria-hidden="true" />
-                  <h3 className="mt-4 text-lg font-semibold text-white">
-                    {title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                    {text}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="faq" className="scroll-mt-24 px-4 py-20 sm:px-6">
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
-            <h2 className="text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Perguntas Frequentes
-            </h2>
-            <div className="flex flex-col gap-3">
-              {faqs.map((item) => (
-                <details
-                  key={item.question}
-                  className="group rounded-2xl bg-[#111] px-5 py-4"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-white [&::-webkit-details-marker]:hidden">
-                    {item.question}
-                    <Plus
-                      className="size-5 shrink-0 text-gray-300 transition-transform group-open:rotate-45"
-                      aria-hidden="true"
-                    />
-                  </summary>
-                  <p className="pt-3 text-sm leading-relaxed text-gray-300">
-                    {item.answer}
-                  </p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-4 py-20 sm:px-6">
-          <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-8 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Pronto para fazer a sua recarga?
-            </h2>
-            <div className="flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
-              <a
-                href={whatsappUrl(productById("unitv-mensal").trigger)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex flex-1 items-center justify-center rounded-full bg-red-600 px-6 py-4 text-center text-sm font-bold text-white transition-colors hover:bg-red-500 sm:text-base"
-              >
-                UniTV Mensal — R${productById("unitv-mensal").price}
-              </a>
-              <a
-                href={whatsappUrl(productById("unitv-anual").trigger)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex flex-1 items-center justify-center rounded-full bg-green-500 px-6 py-4 text-center text-sm font-bold text-black transition-colors hover:bg-green-400 sm:text-base"
-              >
-                UniTV Anual — R${productById("unitv-anual").price}
-              </a>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-white/10 bg-black px-4 py-12 sm:px-6">
-        <div className="mx-auto grid w-full max-w-6xl gap-8 md:grid-cols-3 md:items-start">
-          <span className="text-lg font-bold tracking-tight text-white">
-            PlaySync
-          </span>
-          <nav className="flex flex-col gap-3" aria-label="Links rápidos">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Links rápidos
-            </p>
-            {menu.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm text-gray-400 transition-colors hover:text-white"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <p className="text-xs leading-relaxed text-gray-500">
-            Este site não possui vínculo oficial com plataformas de anúncios.
-            Todo o atendimento é feito via WhatsApp.
-          </p>
-        </div>
-      </footer>
-
-      <a
-        href={WHATSAPP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Falar no WhatsApp"
-        className="fixed bottom-6 right-6 z-50 flex size-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg animate-pulse"
-      >
-        <WhatsAppIcon className="size-7" />
-      </a>
+      <InstallTutorialsSection
+        title="UniTV Download e Instalação — Tutoriais em Vídeo"
+        titleHighlight="Tutoriais em Vídeo"
+        subtitle="Fire TV Stick e TV Box: assista ao vídeo passo a passo. No celular Android, fale conosco pelo WhatsApp para receber o link de download atualizado."
+        cards={[
+          {
+            id: "firetv",
+            title: "Fire TV Stick",
+            subtitle: "Tutorial em vídeo",
+            modalTitle: "Instalação no Fire TV Stick",
+            modalVideoUrl: "https://www.youtube.com/watch?v=yOtNsX0VfmU",
+            modalSteps: [
+              "Assista ao vídeo completo para baixar e instalar o UniTV no Amazon Fire TV Stick.",
+            ],
+          },
+          {
+            id: "tvbox",
+            title: "TV Box",
+            subtitle: "Tutorial em vídeo",
+            modalTitle: "Instalação em TV Box",
+            modalVideoUrl: "https://www.youtube.com/watch?v=S67OL4PHKag",
+            modalSteps: [
+              "Assista ao vídeo completo para baixar e instalar o UniTV na sua TV Box.",
+            ],
+          },
+          {
+            id: "celular",
+            title: "Celular Android",
+            subtitle: "Link de download pelo WhatsApp",
+            externalHref: heroWhatsappUrl,
+          },
+        ]}
+      />
+      <TipsSectionWithModal
+        title="Dicas para Usar sua Assinatura"
+        subtitle="Antes de comprar sua recarga, prepare seu dispositivo. Vincule sua conta, melhore a conexão e escolha o aparelho certo para a melhor experiência. Confira as dicas essenciais do site oficial."
+        tips={[
+          {
+            id: "vincular-conta",
+            label: "Antes de comprar",
+            title: "Vincular conta no app",
+            description:
+              "Essencial antes de ativar seu código de recarga. Garante segurança e libera o uso em 2 telas simultâneas.",
+            ctaLabel: "Ver tutorial",
+            ctaHref: "/#planos",
+          },
+          {
+            id: "estabilidade-tvbox",
+            label: "Assinatura TV Box",
+            title: "Melhore a estabilidade da sua TV Box",
+            description:
+              "Para usar a assinatura na TV Box sem travamentos, conecte via cabo de rede (Ethernet). É muito mais estável que Wi-Fi para streaming.",
+          },
+          {
+            id: "tvbox-compativel",
+            label: "Dispositivo compatível",
+            title: "Qual TV Box usar?",
+            description:
+              "Para a melhor experiência, recomendamos TV Box de marcas confiáveis como Xiaomi. Evita travamentos e garante qualidade FHD nos canais.",
+          },
+        ]}
+        tutorialVideoUrl="https://www.youtube.com/watch?v=OqEqN1qEPBA"
+        tutorialModalTitle="Como Vincular sua Conta UniTV"
+        tutorialModalSubtitle="Como vincular uma conta email/celular UniTV"
+        tutorialSteps={[
+          "AVISO IMPORTANTE: Antes de resgatar o seu código, é essencial vincular uma conta (e-mail ou telefone) no seu perfil do aplicativo.",
+          "Ao vincular, você garante a segurança do seu código e ativa o benefício de poder assistir em até 2 telas com a mesma conta.",
+        ]}
+      />
+      <HowToSection
+        title="Como Comprar Recarga — Passo a Passo"
+        titleHighlight="Passo a Passo"
+        subtitle="Comprar sua recarga oficial é rápido. Veja como funciona: do pedido no WhatsApp até o código na mesma conversa."
+        steps={[
+          {
+            id: "escolha-plano",
+            stepNumber: 1,
+            title: "Escolha seu Plano",
+            description:
+              "Veja os planos e preços: recarga mensal, bimestral, trimestral, semestral ou anual. Escolha o que melhor cabe no seu bolso.",
+          },
+          {
+            id: "fale-whatsapp",
+            stepNumber: 2,
+            title: "Fale no WhatsApp",
+            description:
+              "Clique em comprar e envie o pedido. O pagamento via PIX é combinado na conversa, sem checkout no site.",
+          },
+          {
+            id: "codigo-hora",
+            stepNumber: 3,
+            title: "Código na Hora",
+            description:
+              "O código chega na mesma conversa do WhatsApp. Sem espera e sem e-mail.",
+          },
+          {
+            id: "ative-assinatura",
+            stepNumber: 4,
+            title: "Ative sua Assinatura",
+            description:
+              "Abra o app, insira o código de recarga, vincule sua conta e pronto — acesso completo a canais, filmes e séries em até 2 telas.",
+          },
+        ]}
+        ctaLabel="Comprar Recarga Agora"
+        ctaHref={whatsappUrl(mensal.trigger)}
+      />
+      <TestimonialsSection
+        title="Quem Compra Recarga, Recomenda"
+        subtitle="Veja o que dizem os clientes que já compraram sua assinatura pelo nosso site oficial. Entrega imediata e suporte que fazem diferença."
+        testimonials={[
+          {
+            id: "rafael-m",
+            quote:
+              "Comprei no sábado de tarde para assistir ao jogo. Fiz o PIX, recebi o e-mail com o código de recarga, coloquei no aplicativo e em menos de 5 minutos estava tudo liberado. Imagem limpa e sem travamentos.",
+            author: "Rafael M.",
+            plan: "Recarga Mensal",
+          },
+          {
+            id: "camila-l",
+            quote:
+              "Cancelei minha operadora de TV tradicional e mudei pro UniTV. Melhor escolha que fiz! O catálogo de filmes é gigante, a família toda usa na TV da sala. Vale cada centavo.",
+            author: "Camila L.",
+            plan: "Assinatura Anual",
+          },
+          {
+            id: "roberto-f",
+            quote:
+              "Eu não sou muito bom com tecnologia, mas o suporte por e-mail teve muita paciência e me ajudou a configurar tudo na minha TV TCL passo a passo. Atendimento nota 10!",
+            author: "Roberto F.",
+            plan: "Assinatura Anual",
+          },
+        ]}
+      />
+      <FaqSection
+        title="Dúvidas sobre Recarga UniTV — Perguntas Frequentes"
+        subtitle="Respondemos as principais dúvidas de quem quer comprar recarga UniTV, renovar assinatura UniTV ou saber como funciona o download e instalação do app."
+        ctaLabel="Ver todas as dúvidas frequentes"
+        ctaHref="#faq"
+        items={[
+          {
+            id: "codigo-apos-pedido",
+            question: "Como recebo meu código?",
+            answer:
+              "Ao escolher o plano, o pedido abre no WhatsApp. O código chega na mesma conversa, na hora, depois que o PIX é confirmado.",
+          },
+          {
+            id: "formas-pagamento",
+            question: "Quais são as formas de pagamento aceitas?",
+            answer:
+              "O site não tem checkout. O pagamento é via PIX, combinado direto na conversa do WhatsApp.",
+          },
+          {
+            id: "plano-mensal-anual",
+            question: "Qual a diferença entre o plano mensal e o anual?",
+            answer: `A recarga UniTV mensal custa R$ ${mensal.price} e dá acesso por ${mensal.days} dias. Já a recarga UniTV anual sai por R$ ${anual.price} (antes R$ ${anual.compareAt}). Ambos os planos incluem canais ao vivo, filmes, séries, 2 telas e suporte técnico. A diferença é o período e o custo-benefício.`,
+          },
+          {
+            id: "vincular-conta",
+            question: "Por que preciso vincular uma conta no app?",
+            answer:
+              "Antes de ativar o código da sua recarga UniTV, é essencial vincular uma conta (e-mail ou telefone) no app. Isso garante a segurança da sua assinatura UniTV e libera o benefício de assistir em até 2 telas simultâneas. Sem a vinculação, você não consegue usar o código de recarga corretamente.",
+          },
+          {
+            id: "dispositivos",
+            question: "Em quais dispositivos posso usar a UniTV?",
+            answer:
+              "O app UniTV é compatível com TV Box (assinatura UniTV TV Box), Smart TV com Android, celular Android (UniTV APK) e PC/Mac (via emulador BlueStacks). Para fazer o UniTV download e instalação, confira nossos tutoriais em vídeo com passo a passo para cada dispositivo. Após instalar, basta comprar o código UniTV e ativar.",
+          },
+        ]}
+      />
+      <CtaCardSection
+        title="Comprar Recarga UniTV Oficial — Assine Agora"
+        description="Peça sua UniTV recarga pelo WhatsApp e receba o código na conversa. Escolha entre o plano mensal e o anual promocional, com suporte para instalação em TV Box, celular e Smart TV."
+        monthlyLabel={`Comprar Recarga Mensal — R$ ${mensal.price}`}
+        monthlyHref={whatsappUrl(mensal.trigger)}
+        annualLabel={`Comprar Recarga Anual — R$ ${anual.price}`}
+        annualHref={whatsappUrl(anual.trigger)}
+        footerText="Precisa renovar assinatura UniTV ou tem dúvidas? Consulte nossas perguntas frequentes."
+        footerHref="#faq"
+      />
     </div>
   );
 }
