@@ -7,7 +7,7 @@ import { FloatingWhatsAppButton } from "@/components/FloatingWhatsAppButton";
 import { Container } from "@/components/layout/Container";
 
 export const metadata: Metadata = {
-  title: "Renova UnitTV",
+  title: "Recarga UniTV",
   description: "Loja de códigos digitais",
   icons: {
     icon: "/logo.ico",
